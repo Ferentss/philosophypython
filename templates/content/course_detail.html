@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ course.title }} — Philosophy.{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/learning.css' %}">
+
+<main class="library-page">
+    <div class="container">
+
+        <a href="{% url 'content:course_list' %}" class="library-back">
+            ← ПОВЕРНУТИСЯ ДО КАТАЛОГУ
+        </a>
+
+        <header class="detail-header">
+            <span class="library-kicker">
+                PHILOSOPHY. / НАВЧАЛЬНИЙ КУРС
+            </span>
+
+            <h1>{{ course.title }}</h1>
+
+            <div class="detail-meta">
+                <span>ОСВІТНІЙ МАТЕРІАЛ</span>
+                <span>УРОКІВ: {{ lesson_count }}</span>
+            </div>
+        </header>
+
+        <div class="detail-columns">
+
+            <div class="detail-main">
+
+                <section class="detail-section">
+                    <span class="library-kicker">01 / ПРО КУРС</span>
+
+                    <h2>Про що цей <em>курс?</em></h2>
+
+                    <div class="detail-description">
+                        {{ course.description|linebreaks }}
+                    </div>
+                </section>
+
+                <section class="detail-section" id="lessons">
+                    <span class="library-kicker">
+                        02 / НАВЧАЛЬНА ПРОГРАМА
+                    </span>
+
+                    <h2>Зміст <em>навчання.</em></h2>
+
+                    <div class="lesson-rows">
+                        {% for lesson in lessons %}
+                            <a
+                                class="lesson-row"
+                                href="{% url 'content:lesson_detail' course.pk lesson.pk %}"
+                            >
+                                <span class="lesson-index">
+                                    {{ forloop.counter|stringformat:"02d" }}
+                                </span>
+
+                                <div class="lesson-information">
+                                    <span class="library-kicker">УРОК</span>
+
+                                    <h3>{{ lesson.title }}</h3>
+
+                                    <p>
+                                        {{ lesson.content|striptags|truncatewords:24 }}
+                                    </p>
+
+                                    {% if lesson.philosopher %}
+                                        <span class="library-kicker">
+                                            {{ lesson.philosopher.name }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+
+                                <span class="lesson-arrow" aria-hidden="true">
+                                    ↗
+                                </span>
+                            </a>
+                        {% empty %}
+                            <div class="library-empty">
+                                <h3>Уроки готуються.</h3>
+
+                                <p>
+                                    Після додавання уроків через
+                                    Django Admin вони автоматично
+                                    з'являться на цій сторінці.
+                                </p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+            </div>
+
+            <aside class="detail-aside">
+                <span class="library-kicker">
+                    PHILOSOPHY. ACADEMY
+                </span>
+
+                <span class="detail-symbol">Φ</span>
+
+                <h3>
+                    Мислення починається із запитання.
+                </h3>
+
+                <p>
+                    Вивчай філософські ідеї, знайомся з
+                    мислителями та поступово проходь уроки.
+                </p>
+
+                <a href="#lessons" class="detail-action">
+                    ПЕРЕЙТИ ДО УРОКІВ ↘
+                </a>
+            </aside>
+
+        </div>
+    </div>
+</main>
+{% endblock %}

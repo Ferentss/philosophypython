@@ -1,0 +1,91 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ lesson.title }} — Philosophy.{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/learning.css' %}">
+
+<main class="library-page">
+    <div class="container">
+        <a href="{% url 'content:course_detail' course.pk %}" class="library-back">
+            ← ПОВЕРНУТИСЯ ДО КУРСУ
+        </a>
+
+        <div class="reading-layout">
+            <article class="reading-article">
+                <header class="reading-header">
+                    <span class="library-kicker">
+                        PHILOSOPHY. / НАВЧАЛЬНИЙ МАТЕРІАЛ
+                    </span>
+
+                    <h1>{{ lesson.title }}</h1>
+
+                    <p>
+                        Курс: {{ course.title }}
+                    </p>
+                </header>
+
+                <section class="reading-body">
+                    {{ lesson.content|linebreaks }}
+                </section>
+
+                {% if lesson.philosopher %}
+                    <section class="reading-related">
+                        <span class="library-kicker">
+                            ПОВ'ЯЗАНИЙ МИСЛИТЕЛЬ
+                        </span>
+
+                        <h2>{{ lesson.philosopher.name }}</h2>
+
+                        <p>
+                            {{ lesson.philosopher.biography|truncatewords:45 }}
+                        </p>
+                    </section>
+                {% endif %}
+
+                <nav class="reading-navigation" aria-label="Навігація уроками">
+                    {% if previous_lesson %}
+                        <a href="{% url 'content:lesson_detail' course.pk previous_lesson.pk %}">
+                            <small>← ПОПЕРЕДНІЙ УРОК</small>
+                            <strong>{{ previous_lesson.title }}</strong>
+                        </a>
+                    {% else %}
+                        <span></span>
+                    {% endif %}
+
+                    {% if next_lesson %}
+                        <a href="{% url 'content:lesson_detail' course.pk next_lesson.pk %}">
+                            <small>НАСТУПНИЙ УРОК →</small>
+                            <strong>{{ next_lesson.title }}</strong>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'content:course_detail' course.pk %}">
+                            <small>НАВЧАЛЬНА ПРОГРАМА ↗</small>
+                            <strong>Повернутися до курсу</strong>
+                        </a>
+                    {% endif %}
+                </nav>
+            </article>
+
+            <aside class="reading-aside">
+                <span class="library-kicker">
+                    PHILOSOPHY. ACADEMY
+                </span>
+
+                <span class="detail-symbol">Φ</span>
+
+                <p>
+                    Філософія починається там, де людина
+                    не боїться ставити запитання.
+                </p>
+
+                <a href="{% url 'content:course_detail' course.pk %}" class="detail-action">
+                    УСІ УРОКИ КУРСУ ↗
+                </a>
+            </aside>
+        </div>
+    </div>
+</main>
+{% endblock %}

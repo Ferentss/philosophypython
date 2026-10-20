@@ -1,0 +1,67 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Курси — Philosophy.{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/learning.css' %}">
+
+<main class="library-page">
+    <div class="container">
+        <header class="library-header">
+            <span class="library-kicker">
+                PHILOSOPHY. / БІБЛІОТЕКА ЗНАНЬ
+            </span>
+
+            <h1>Шлях до <em>пізнання.</em></h1>
+
+            <p>
+                Досліджуй філософські епохи, ідеї та мислителів.
+                Обирай курс, щоб розпочати навчання.
+            </p>
+        </header>
+
+        <section class="library-grid" aria-label="Каталог курсів">
+            {% for course in courses %}
+                <a
+                    href="{% url 'content:course_detail' course.pk %}"
+                    class="library-card"
+                    aria-label="Відкрити курс {{ course.title }}"
+                >
+                    <div class="library-card-head">
+                        <span>НАВЧАЛЬНИЙ КУРС</span>
+                        <span>{{ forloop.counter|stringformat:"02d" }}</span>
+                    </div>
+
+                    <div class="library-card-content">
+                        <span class="library-symbol">Φ</span>
+
+                        <h2>{{ course.title }}</h2>
+
+                        <p>
+                            {{ course.description|striptags|truncatewords:27 }}
+                        </p>
+                    </div>
+
+                    <div class="library-card-foot">
+                        <span>ВІДКРИТИ КУРС</span>
+                        <span aria-hidden="true">↗</span>
+                    </div>
+                </a>
+            {% empty %}
+                <div class="library-empty">
+                    <span class="library-kicker">АРХІВ ЗНАНЬ</span>
+
+                    <h2>Курсів поки немає.</h2>
+
+                    <p>
+                        Коли викладач додасть новий курс,
+                        він автоматично з'явиться тут.
+                    </p>
+                </div>
+            {% endfor %}
+        </section>
+    </div>
+</main>
+{% endblock %}

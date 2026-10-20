@@ -1,0 +1,25 @@
+<header class="site-header">
+    <nav class="container main-navigation" aria-label="Головна навігація">
+        <a class="site-logo" href="{% url 'content:home' %}">
+            Philosophy<span>.</span>
+        </a>
+
+        <div class="navigation-links">
+            <a href="{% url 'content:home' %}">Головна</a>
+            <a href="{% url 'content:home' %}#epochs">Епохи</a>
+            <a href="{% url 'content:home' %}#philosophers">Мислителі</a>
+            <a href="{% url 'content:course_list' %}">Курси</a>
+        </div>
+
+        <div class="navigation-account">
+            {% if user.is_authenticated %}
+                <span class="user-name">{{ user.username }}</span>
+                {% if user.is_staff %}
+                    <a href="{% url 'admin:index' %}" class="outline-link">Адмінпанель</a>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'admin:login' %}" class="outline-link">Увійти</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>

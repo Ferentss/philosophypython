@@ -1,0 +1,357 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Philosophy. — Мистецтво мислити{% endblock %}
+
+{% block content %}
+
+<main>
+    <section class="opening" id="top">
+        <div class="opening-art"></div>
+        <div class="opening-shade"></div>
+
+        <div class="container opening-content">
+            <div class="opening-intro">
+                <span class="section-kicker">
+                    PHILOSOPHY. / АКАДЕМІЯ ДУМКИ
+                </span>
+
+                <h1>
+                    Пізнай себе.
+                    <em>Постав під сумнів світ.</em>
+                </h1>
+
+                <p>
+                    Тисячоліттями люди шукали істину.
+                    Відкрий ідеї мислителів, які змінили
+                    наше розуміння людини, свободи та світу.
+                </p>
+
+                <div class="opening-buttons">
+                    <a href="{% url 'content:course_list' %}" class="primary-action">
+                        Почати навчання
+                        <span>↗</span>
+                    </a>
+
+                    <a href="#introduction" class="quiet-action">
+                        Дослідити академію ↓
+                    </a>
+                </div>
+            </div>
+
+            <div class="opening-bottom">
+                <span>01 / МИСТЕЦТВО ПІЗНАННЯ</span>
+                <span>ГОРТАЙ НИЖЧЕ ↓</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="intro-section" id="introduction">
+        <div class="container intro-grid">
+            <div class="intro-label">
+                <span class="section-kicker">ПРО PHILOSOPHY.</span>
+                <span class="roman-decoration">I.</span>
+            </div>
+
+            <div class="intro-copy">
+                <h2>
+                    Світ змінюється.
+                    <em>Запитання залишаються.</em>
+                </h2>
+
+                <p class="intro-lead">
+                    Що є істиною? Де проходить межа свободи?
+                    Чи можемо ми пізнати самих себе?
+                </p>
+
+                <p>
+                    Philosophy. — освітній простір, присвячений
+                    історії філософії та її найважливішим ідеям.
+                    Тут зібрані філософські епохи, мислителі,
+                    навчальні курси та уроки.
+                </p>
+
+                <div class="intro-rule">
+                    <span>МИСЛИ</span>
+                    <span>СУМНІВАЙСЯ</span>
+                    <span>ПІЗНАВАЙ</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="epochs-section" id="epochs">
+        <div class="container">
+            <div class="section-heading">
+                <div>
+                    <span class="section-kicker">
+                        02 / ІСТОРІЯ ЛЮДСЬКОЇ ДУМКИ
+                    </span>
+
+                    <h2>Епохи <em>пізнання.</em></h2>
+                </div>
+
+                <p>
+                    Кожна епоха залишила власні відповіді
+                    на вічні запитання людства.
+                </p>
+            </div>
+
+            <div class="epoch-list">
+                {% for era in eras %}
+                    <article class="epoch-row">
+                        <span class="epoch-number">
+                            {{ forloop.counter|stringformat:"02d" }}
+                        </span>
+
+                        <div class="epoch-main">
+                            <h3>{{ era.title }}</h3>
+                            <p>
+                                {{ era.description|striptags|truncatewords:30 }}
+                            </p>
+                        </div>
+
+                        <span class="epoch-period">
+                            {% if era.start_year != None %}
+                                {{ era.start_year }}
+                            {% else %}
+                                ?
+                            {% endif %}
+                            —
+                            {% if era.end_year != None %}
+                                {{ era.end_year }}
+                            {% else %}
+                                ?
+                            {% endif %}
+                        </span>
+                    </article>
+                {% empty %}
+                    <div class="section-empty">
+                        <h3>Історія ще наповнюється.</h3>
+                        <p>Філософські епохи з'являться тут незабаром.</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="academy-art" aria-label="Історія філософської думки">
+        <div class="academy-art-image"></div>
+        <div class="academy-art-overlay"></div>
+
+        <div class="container academy-art-content">
+            <span class="section-kicker">
+                03 / СПАДЩИНА ФІЛОСОФІЇ
+            </span>
+
+            <h2>
+                Думки минають.
+                <em>Ідеї залишаються.</em>
+            </h2>
+
+            <p>
+                Від діалогів античних мислителів до сучасних
+                дискусій — філософія залишається розмовою
+                людства із самим собою.
+            </p>
+
+            <div class="academy-art-caption">
+                <span>ФІЛОСОФІЯ / ДІАЛОГ КРІЗЬ СТОЛІТТЯ</span>
+                <span>Φ</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="philosophers-section" id="philosophers">
+        <div class="container">
+            <div class="section-heading">
+                <div>
+                    <span class="section-kicker">
+                        04 / ВЕЛИКІ МИСЛИТЕЛІ
+                    </span>
+
+                    <h2>Люди, що <em>мислили інакше.</em></h2>
+                </div>
+
+                <p>
+                    Їхні ідеї пережили століття і продовжують
+                    впливати на наше бачення світу.
+                </p>
+            </div>
+
+            <div class="thinker-list">
+                {% for philosopher in philosophers %}
+                    <article class="thinker-entry">
+                        <span class="thinker-index">
+                            {{ forloop.counter|stringformat:"02d" }}
+                        </span>
+
+                        <div class="thinker-monogram">
+                            {{ philosopher.name|slice:":1" }}
+                        </div>
+
+                        <div class="thinker-details">
+                            <span>
+                                {% if philosopher.era %}
+                                    {{ philosopher.era.title }}
+                                {% else %}
+                                    ФІЛОСОФ
+                                {% endif %}
+                            </span>
+
+                            <h3>{{ philosopher.name }}</h3>
+
+                            <p>
+                                {{ philosopher.biography|striptags|truncatewords:35 }}
+                            </p>
+                        </div>
+
+                        <span class="thinker-date">
+                            {% if philosopher.birth_year != None %}
+                                {{ philosopher.birth_year }}
+                            {% endif %}
+                        </span>
+                    </article>
+                {% empty %}
+                    <div class="section-empty">
+                        <h3>Мислителі незабаром.</h3>
+                        <p>
+                            Біографії з'являться після наповнення
+                            філософської бібліотеки.
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="freedom-section" aria-labelledby="freedom-title">
+        <div class="container freedom-layout">
+            <figure class="freedom-art">
+                <img
+                    src="{% static 'images/fallen-engraving.png' %}"
+                    alt="Старовинна гравюра із крилатою постаттю серед скель"
+                    loading="lazy"
+                >
+
+                <figcaption>
+                    КЛАСИЧНА ГРАВЮРА / АЛЕГОРІЯ ПАДІННЯ
+                </figcaption>
+            </figure>
+
+            <div class="freedom-copy">
+                <span class="section-kicker">
+                    05 / ФІЛОСОФІЯ МОРАЛІ
+                </span>
+
+                <h2 id="freedom-title">
+                    Свобода.
+                    <em>Гординя.</em>
+                    Вибір.
+                </h2>
+
+                <div class="freedom-line"></div>
+
+                <p class="freedom-lead">
+                    Чи існує свобода без відповідальності?
+                </p>
+
+                <p>
+                    Кожне рішення має наслідки.
+                    Кожна людина стикається з питаннями
+                    добра, зла та відповідальності
+                    за власні вчинки.
+                </p>
+
+                <p>
+                    Саме такі питання досліджує етика —
+                    один із найважливіших розділів філософії.
+                </p>
+
+                <div class="freedom-topics">
+                    <span>ЕТИКА</span>
+                    <span>СВОБОДА ВОЛІ</span>
+                    <span>МОРАЛЬ</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="library-feature" id="learning">
+        <div class="container">
+            <div class="library-feature-layout">
+                <div class="library-feature-copy">
+                    <span class="section-kicker">
+                        06 / НАВЧАЛЬНИЙ ПРОСТІР
+                    </span>
+
+                    <h2>
+                        Від роздумів
+                        <em>до знань.</em>
+                    </h2>
+
+                    <p class="library-feature-lead">
+                        Твоя особиста подорож крізь історію філософії
+                        починається тут.
+                    </p>
+
+                    <p>
+                        Обирай навчальний курс, знайомся
+                        з основними ідеями філософської епохи
+                        та проходь уроки у зручному порядку.
+                    </p>
+
+                    <a href="{% url 'content:course_list' %}" class="primary-action">
+                        Відкрити бібліотеку курсів
+                        <span>↗</span>
+                    </a>
+                </div>
+
+                <div class="library-feature-visual">
+                    <div class="library-visual-top">
+                        <span>PHILOSOPHY. / LIBRARY</span>
+                        <span>ARCHIVE № 01</span>
+                    </div>
+
+                    <div class="library-visual-center">
+                        <span class="library-visual-symbol">Φ</span>
+
+                        <div class="library-visual-ornament"></div>
+
+                        <h3>
+                            Scientia.
+                            <em>Sapientia.</em>
+                        </h3>
+
+                        <p>ЗНАННЯ ТА МУДРІСТЬ</p>
+                    </div>
+
+                    <div class="library-visual-bottom">
+                        <span>КУРСИ · УРОКИ · ІДЕЇ</span>
+                        <span>↗</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="closing-section">
+        <div class="container closing-content">
+            <span class="section-kicker">
+                ПРОДОВЖУЙ СТАВИТИ ЗАПИТАННЯ
+            </span>
+
+            <h2>
+                Не шукай лише відповіді.
+                <em>Навчися мислити.</em>
+            </h2>
+
+            <a href="{% url 'content:course_list' %}" class="quiet-closing-link">
+                УВІЙТИ ДО БІБЛІОТЕКИ ↗
+            </a>
+        </div>
+    </section>
+</main>
+
+{% endblock %}
