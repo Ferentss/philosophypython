@@ -1,0 +1,30 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<section class="container py-5">
+    <h1>Видалення курсу</h1>
+
+    <p>
+        Ви впевнені, що хочете видалити курс
+        <strong>{{ object.title }}</strong>?
+    </p>
+
+    <p>Цю дію неможливо скасувати.</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <button type="submit" class="btn btn-danger">
+            Так, видалити
+        </button>
+
+        <a
+            href="{% url 'content:course_detail' object.pk %}"
+            class="btn btn-secondary"
+        >
+            Скасувати
+        </a>
+    </form>
+</section>
+{% endblock %}
