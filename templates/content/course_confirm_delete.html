@@ -2,26 +2,115 @@
 {% extends "base.html" %}
 
 {% block content %}
-<section class="container py-5">
-    <h1>Видалення курсу</h1>
+<style>
+.delete-page {
+    min-height: 75vh;
+    background: #0e1014;
+    color: #eeecea;
+    padding: 130px 8% 100px;
+}
 
-    <p>
-        Ви впевнені, що хочете видалити курс
-        <strong>{{ object.title }}</strong>?
+.delete-label {
+    color: #afbdcf;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+.delete-title {
+    font-family: Georgia, serif;
+    font-size: clamp(48px, 7vw, 100px);
+    font-weight: 400;
+    line-height: 1.1;
+    margin: 30px 0 45px;
+}
+
+.delete-title em {
+    color: #afbdcf;
+    font-weight: 400;
+}
+
+.delete-line {
+    border: 0;
+    border-top: 1px solid #343b44;
+    margin: 40px 0;
+}
+
+.delete-description {
+    color: #bdc6d0;
+    font-size: 18px;
+    line-height: 1.8;
+}
+
+.delete-warning {
+    color: #8593a4;
+    margin-bottom: 35px;
+}
+
+.delete-actions {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+.delete-button {
+    background: #ececec;
+    color: #101218;
+    border: none;
+    padding: 19px 28px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.delete-cancel {
+    display: inline-block;
+    color: #ececec;
+    text-decoration: none;
+    border: 1px solid #434b55;
+    padding: 18px 28px;
+}
+
+.delete-button:hover {
+    background: #b8c7d7;
+}
+
+.delete-cancel:hover {
+    color: #ffffff;
+    border-color: #ffffff;
+}
+</style>
+
+<section class="delete-page">
+    <p class="delete-label">
+        PHILOSOPHY. / КЕРУВАННЯ КУРСАМИ
     </p>
 
-    <p>Цю дію неможливо скасувати.</p>
+    <h1 class="delete-title">
+        Видалення <em>курсу.</em>
+    </h1>
 
-    <form method="post">
+    <hr class="delete-line">
+
+    <p class="delete-description">
+        Ви впевнені, що хочете видалити курс
+        «{{ object.title }}»?
+    </p>
+
+    <p class="delete-warning">
+        Цю дію неможливо скасувати.
+        Усі пов'язані уроки також будуть видалені.
+    </p>
+
+    <form method="post" class="delete-actions">
         {% csrf_token %}
 
-        <button type="submit" class="btn btn-danger">
-            Так, видалити
+        <button type="submit" class="delete-button">
+            Так, видалити ↗
         </button>
 
         <a
             href="{% url 'content:course_detail' object.pk %}"
-            class="btn btn-secondary"
+            class="delete-cancel"
         >
             Скасувати
         </a>

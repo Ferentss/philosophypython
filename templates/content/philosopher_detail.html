@@ -1,0 +1,121 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/philosophy-library.css' %}">
+
+<main class="ph-library">
+    <div class="ph-container">
+        <p class="ph-eyebrow">
+            PHILOSOPHY. / ВЕЛИКІ МИСЛИТЕЛІ
+        </p>
+
+        <h1 class="ph-heading">
+            {{ philosopher.name }}
+        </h1>
+
+        <p class="ph-intro">
+            {% if philosopher.birth_year != None %}
+                {{ philosopher.birth_year }} р.
+            {% endif %}
+
+            {% if philosopher.death_year != None %}
+                — {{ philosopher.death_year }} р.
+            {% endif %}
+        </p>
+
+        <p class="ph-intro">
+            <a href="{% url 'content:era_detail' philosopher.era.pk %}"
+               style="color: #c5d4e4;">
+                {{ philosopher.era.title }} ↗
+            </a>
+        </p>
+
+        <hr class="ph-divider">
+
+        <article class="ph-article">
+            <h2 class="ph-section-title">
+                Життя та філософія
+            </h2>
+
+            <div class="ph-article-text">
+                {{ philosopher.biography }}
+            </div>
+        </article>
+
+        <hr class="ph-divider">
+
+        <h2 class="ph-section-title">
+            Філософські праці
+        </h2>
+
+        {% if texts %}
+        <div class="ph-grid">
+            {% for text in texts %}
+            <div class="ph-card">
+                <span class="ph-card-label">
+                    Філософський текст
+                </span>
+
+                <h3 class="ph-card-title">
+                    {{ text.title }}
+                </h3>
+
+                <p class="ph-card-description">
+                    {{ text.original_content|truncatewords:35 }}
+                </p>
+
+                {% if text.publication_year %}
+                <div class="ph-card-bottom">
+                    {{ text.publication_year }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="ph-intro">
+            Праці цього мислителя ще не додані.
+        </p>
+        {% endif %}
+
+        <hr class="ph-divider">
+
+        <h2 class="ph-section-title">
+            Пов'язані уроки
+        </h2>
+
+        {% if lessons %}
+        <div class="ph-grid">
+            {% for lesson in lessons %}
+            <a href="{% url 'content:lesson_detail' lesson.pk %}"
+               class="ph-card">
+
+                <span class="ph-card-label">
+                    {{ lesson.course.title }}
+                </span>
+
+                <h3 class="ph-card-title">
+                    {{ lesson.title }}
+                </h3>
+
+                <div class="ph-card-bottom">
+                    Перейти до уроку ↗
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="ph-intro">
+            Пов'язаних опублікованих уроків поки немає.
+        </p>
+        {% endif %}
+
+        <a href="{% url 'content:philosopher_list' %}"
+           class="ph-back">
+            ← Усі мислителі
+        </a>
+    </div>
+</main>
+{% endblock %}

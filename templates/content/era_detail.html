@@ -1,0 +1,81 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/philosophy-library.css' %}">
+
+<main class="ph-library">
+    <div class="ph-container">
+        <p class="ph-eyebrow">
+            PHILOSOPHY. / ФІЛОСОФСЬКА ЕПОХА
+        </p>
+
+        <h1 class="ph-heading">
+            {{ era.title }}
+        </h1>
+
+        <p class="ph-intro">
+            {% if era.start_year != None %}
+                Початок: {{ era.start_year }} р.
+            {% endif %}
+
+            {% if era.end_year != None %}
+                · Завершення: {{ era.end_year }} р.
+            {% endif %}
+        </p>
+
+        <hr class="ph-divider">
+
+        <article class="ph-article">
+            <h2 class="ph-section-title">
+                Про епоху
+            </h2>
+
+            <div class="ph-article-text">
+                {{ era.description }}
+            </div>
+        </article>
+
+        <hr class="ph-divider">
+
+        <h2 class="ph-section-title">
+            Мислителі цієї епохи
+        </h2>
+
+        {% if philosophers %}
+        <div class="ph-grid">
+            {% for philosopher in philosophers %}
+            <a href="{% url 'content:philosopher_detail' philosopher.pk %}"
+               class="ph-card">
+
+                <span class="ph-card-label">
+                    Філософ
+                </span>
+
+                <h3 class="ph-card-title">
+                    {{ philosopher.name }}
+                </h3>
+
+                <p class="ph-card-description">
+                    {{ philosopher.biography|truncatewords:25 }}
+                </p>
+
+                <div class="ph-card-bottom">
+                    Читати біографію ↗
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="ph-intro">
+            Для цієї епохи поки немає філософів.
+        </p>
+        {% endif %}
+
+        <a href="{% url 'content:era_list' %}" class="ph-back">
+            ← Усі епохи
+        </a>
+    </div>
+</main>
+{% endblock %}

@@ -1,0 +1,166 @@
+/* Philosophy LMS: dark philosophers section, consistent with academy-art */
+.philosophers-section {
+    padding: 0;
+    background: #0f1218;
+}
+
+.philosophers-hero {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    min-height: 760px;
+    overflow: hidden;
+    background: #090b0f;
+}
+
+.philosophers-hero-image {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background-size: cover;
+    background-position: center 40%;
+    background-repeat: no-repeat;
+    filter: grayscale(100%) brightness(.70) contrast(1.12);
+}
+
+.philosophers-hero-shade {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(90deg,
+        rgba(9, 11, 15, .95) 0%,
+        rgba(9, 11, 15, .75) 30%,
+        rgba(9, 11, 15, .42) 62%,
+        rgba(9, 11, 15, .18) 100%),
+        linear-gradient(0deg,
+        #0f1218 0%,
+        transparent 30%,
+        rgba(9, 11, 15, .22) 100%);
+}
+
+.philosophers-hero-content {
+    padding-top: 125px;
+    padding-bottom: 80px;
+}
+
+.philosophers-hero h2 {
+    max-width: 880px;
+    margin: 35px 0;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(66px, 8vw, 122px);
+    font-weight: 500;
+    line-height: .94;
+}
+
+.philosophers-hero h2 em {
+    display: block;
+    color: #b7c5d4;
+    font-weight: 400;
+}
+
+.philosophers-hero-content > p {
+    max-width: 540px;
+    color: #d2dbe4;
+    font-size: 17px;
+    line-height: 1.9;
+}
+
+.philosophers-hero-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 22px;
+    margin-top: 75px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(221, 230, 239, .36);
+    color: #b9c8d7;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+}
+
+.philosophers-hero-bottom a {
+    color: #e4edf5;
+    text-decoration: none;
+}
+
+.philosophers-hero-bottom a:hover {
+    color: #fff;
+}
+
+.philosophers-directory {
+    padding-top: 90px;
+    padding-bottom: 130px;
+}
+
+.philosophers-directory-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 40px;
+    margin-bottom: 45px;
+}
+
+.philosophers-directory-head h3 {
+    margin: 0;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-size: clamp(46px, 5vw, 78px);
+    font-weight: 500;
+}
+
+.philosophers-directory-head h3 em {
+    color: #b0bfd0;
+    font-weight: 400;
+}
+
+.philosophers-directory-head p {
+    max-width: 360px;
+    color: #aab8c7;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.philosopher-directory-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.philosopher-directory-link:hover {
+    color: inherit;
+}
+
+@media (max-width: 767px) {
+    .philosophers-hero {
+        min-height: 660px;
+    }
+
+    .philosophers-hero-image {
+        background-position: 52% center;
+    }
+
+    .philosophers-hero-shade {
+        background: linear-gradient(0deg,
+            #0f1218 0%,
+            rgba(9, 11, 15, .82) 42%,
+            rgba(9, 11, 15, .25) 100%);
+    }
+
+    .philosophers-hero-content {
+        padding-top: 90px;
+        padding-bottom: 75px;
+    }
+
+    .philosophers-hero h2 {
+        font-size: clamp(58px, 11vw, 82px);
+    }
+
+    .philosophers-directory {
+        padding-top: 75px;
+        padding-bottom: 90px;
+    }
+
+    .philosophers-directory-head {
+        display: block;
+    }
+}

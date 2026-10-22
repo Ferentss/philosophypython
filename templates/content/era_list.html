@@ -1,0 +1,78 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/philosophy-library.css' %}">
+
+<main class="ph-library">
+    <div class="ph-container">
+        <p class="ph-eyebrow">
+            02 / ІСТОРІЯ ЛЮДСЬКОЇ ДУМКИ
+        </p>
+
+        <h1 class="ph-heading">
+            Епохи <em>пізнання.</em>
+        </h1>
+
+        <p class="ph-intro">
+            Від античності до сучасності.
+            Досліджуйте, як змінювалися погляди
+            людства на світ, істину та сенс життя.
+        </p>
+
+        <hr class="ph-divider">
+
+        {% if eras %}
+        <div class="ph-grid">
+            {% for era in eras %}
+            <a href="{% url 'content:era_detail' era.pk %}"
+               class="ph-card">
+
+                <span class="ph-card-label">
+                    Епоха / {{ forloop.counter }}
+                </span>
+
+                <h2 class="ph-card-title">
+                    {{ era.title }}
+                </h2>
+
+                <p class="ph-card-description">
+                    {{ era.description|truncatewords:25 }}
+                </p>
+
+                <div class="ph-card-bottom">
+                    Дослідити епоху ↗
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="ph-empty">
+            <h2>Історія ще наповнюється.</h2>
+            <p>Філософські епохи з'являться тут незабаром.</p>
+        </div>
+        {% endif %}
+
+        {% if is_paginated %}
+        <nav class="ph-pagination" aria-label="Сторінки епох">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}">
+                ← Назад
+            </a>
+            {% endif %}
+
+            <span>
+                {{ page_obj.number }} / {{ paginator.num_pages }}
+            </span>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">
+                Далі →
+            </a>
+            {% endif %}
+        </nav>
+        {% endif %}
+    </div>
+</main>
+{% endblock %}

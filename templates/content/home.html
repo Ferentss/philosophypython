@@ -1,10 +1,10 @@
-
 {% extends "base.html" %}
 {% load static %}
 
 {% block title %}Philosophy. — Мистецтво мислити{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/philosophers-home.css' %}">
 
 <main>
     <section class="opening" id="top">
@@ -164,25 +164,41 @@
     </section>
 
     <section class="philosophers-section" id="philosophers">
-        <div class="container">
-            <div class="section-heading">
-                <div>
-                    <span class="section-kicker">
-                        04 / ВЕЛИКІ МИСЛИТЕЛІ
-                    </span>
+        <div class="philosophers-hero">
+            <div class="philosophers-hero-image"
+                 style="background-image: url('{% static 'images/four_philosophers.png' %}');"></div>
+            <div class="philosophers-hero-shade"></div>
 
-                    <h2>Люди, що <em>мислили інакше.</em></h2>
-                </div>
+            <div class="container philosophers-hero-content">
+                <span class="section-kicker">04 / ВЕЛИКІ МИСЛИТЕЛІ</span>
+
+                <h2>Люди, що <em>мислили інакше.</em></h2>
 
                 <p>
-                    Їхні ідеї пережили століття і продовжують
-                    впливати на наше бачення світу.
+                    Арістотель. Платон. Сократ. Кант.
+                    Чотири постаті, чиї ідеї назавжди змінили
+                    наше розуміння світу.
                 </p>
+
+                <div class="philosophers-hero-bottom">
+                    <span>ФІЛОСОФІЯ / ДУМКА КРІЗЬ СТОЛІТТЯ</span>
+                    <a href="{% url 'content:philosopher_list' %}">
+                        УСІ МИСЛИТЕЛІ ↗
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container philosophers-directory">
+            <div class="philosophers-directory-head">
+                <h3>Великі <em>мислителі.</em></h3>
+                <p>Біографії, філософські праці та навчальні матеріали.</p>
             </div>
 
             <div class="thinker-list">
                 {% for philosopher in philosophers %}
-                    <article class="thinker-entry">
+                    <a href="{% url 'content:philosopher_detail' philosopher.pk %}"
+                       class="thinker-entry philosopher-directory-link">
                         <span class="thinker-index">
                             {{ forloop.counter|stringformat:"02d" }}
                         </span>
@@ -192,19 +208,9 @@
                         </div>
 
                         <div class="thinker-details">
-                            <span>
-                                {% if philosopher.era %}
-                                    {{ philosopher.era.title }}
-                                {% else %}
-                                    ФІЛОСОФ
-                                {% endif %}
-                            </span>
-
+                            <span>{{ philosopher.era.title }}</span>
                             <h3>{{ philosopher.name }}</h3>
-
-                            <p>
-                                {{ philosopher.biography|striptags|truncatewords:35 }}
-                            </p>
+                            <p>{{ philosopher.biography|striptags|truncatewords:35 }}</p>
                         </div>
 
                         <span class="thinker-date">
@@ -212,14 +218,11 @@
                                 {{ philosopher.birth_year }}
                             {% endif %}
                         </span>
-                    </article>
+                    </a>
                 {% empty %}
                     <div class="section-empty">
                         <h3>Мислителі незабаром.</h3>
-                        <p>
-                            Біографії з'являться після наповнення
-                            філософської бібліотеки.
-                        </p>
+                        <p>Додай філософів у Django Admin — вони з'являться тут автоматично.</p>
                     </div>
                 {% endfor %}
             </div>
