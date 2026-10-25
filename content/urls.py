@@ -1,20 +1,30 @@
 
 from django.urls import path
-from django.views.generic import DetailView, RedirectView
+from django.views.generic import ListView, DetailView
 
 from . import views
 from .models import Era, Philosopher
 
+
 app_name = "content"
 
-urlpatterns = [
-    path("", views.home, name="home"),
 
+urlpatterns = [
+    # Головна сторінка
+    path(
+        "",
+        views.home,
+        name="home",
+    ),
+
+    # Філософські епохи
     path(
         "eras/",
-        RedirectView.as_view(
-            url="/#epochs",
-            permanent=False
+        ListView.as_view(
+            model=Era,
+            template_name="content/era_list.html",
+            context_object_name="eras",
+            ordering=["start_year"],
         ),
         name="era_list",
     ),
@@ -29,6 +39,7 @@ urlpatterns = [
         name="era_detail",
     ),
 
+    # Філософи
     path(
         "philosophers/",
         views.philosopher_list,
@@ -45,7 +56,12 @@ urlpatterns = [
         name="philosopher_detail",
     ),
 
-    path("courses/", views.course_list, name="course_list"),
+    # Курси
+    path(
+        "courses/",
+        views.course_list,
+        name="course_list",
+    ),
 
     path(
         "courses/create/",
@@ -71,6 +87,7 @@ urlpatterns = [
         name="course_delete",
     ),
 
+    # Уроки
     path(
         "courses/<int:course_pk>/lessons/create/",
         views.LessonCreateView.as_view(),
