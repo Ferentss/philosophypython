@@ -1,0 +1,111 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Філософські праці | Philosophy LMS
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet"
+      href="{% static 'css/philosophy-library.css' %}">
+
+<main class="ph-library">
+    <div class="ph-container">
+
+        <p class="ph-eyebrow">
+            PHILOSOPHY. / БІБЛІОТЕКА ПРАЦЬ
+        </p>
+
+        <h1 class="ph-heading">
+            Філософські праці
+        </h1>
+
+        <p class="ph-intro">
+            Ознайомся з працями видатних мислителів
+            та їхніми філософськими ідеями.
+        </p>
+
+        <hr class="ph-divider">
+
+        <div class="ph-grid">
+
+            {% for text in texts %}
+
+                <a href="{% url 'content:text_detail' text.pk %}"
+                   class="ph-card">
+
+                    <span class="ph-card-label">
+                        ФІЛОСОФСЬКА ПРАЦЯ
+                    </span>
+
+                    <h2 class="ph-card-title">
+                        {{ text.title }}
+                    </h2>
+
+                    <p class="ph-card-description">
+                        Автор: {{ text.philosopher.name }}
+                    </p>
+
+                    {% if text.publication_year %}
+                        <p class="ph-card-description">
+                            Дата: {{ text.publication_year }}
+                        </p>
+                    {% endif %}
+
+                    <p class="ph-card-description">
+                        {{ text.original_content|truncatewords:25 }}
+                    </p>
+
+                    <div class="ph-card-bottom">
+                        Читати працю ↗
+                    </div>
+
+                </a>
+
+            {% empty %}
+
+                <p class="ph-intro">
+                    Філософських праць поки немає.
+                    Їх можна додати через Django Admin.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+        {% if is_paginated %}
+            <nav class="d-flex justify-content-center
+                        align-items-center gap-3 mt-5"
+                 aria-label="Сторінки праць">
+
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}"
+                       class="ph-back">
+                        ← Назад
+                    </a>
+                {% endif %}
+
+                <span class="ph-intro">
+                    {{ page_obj.number }}
+                    / {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}"
+                       class="ph-back">
+                        Далі →
+                    </a>
+                {% endif %}
+
+            </nav>
+        {% endif %}
+
+        <a href="{% url 'content:home' %}"
+           class="ph-back">
+            ← На головну
+        </a>
+
+    </div>
+</main>
+{% endblock %}

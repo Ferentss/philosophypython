@@ -1,0 +1,80 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {{ text.title }} | Philosophy LMS
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet"
+      href="{% static 'css/philosophy-library.css' %}">
+
+<main class="ph-library">
+    <div class="ph-container">
+
+        <p class="ph-eyebrow">
+            PHILOSOPHY. / ФІЛОСОФСЬКА ПРАЦЯ
+        </p>
+
+        <h1 class="ph-heading">
+            {{ text.title }}
+        </h1>
+
+        <p class="ph-intro">
+            Автор:
+            <a href="{% url 'content:philosopher_detail' text.philosopher.pk %}"
+               style="color: #c5d4e4;">
+                {{ text.philosopher.name }} ↗
+            </a>
+        </p>
+
+        {% if text.publication_year %}
+            <p class="ph-intro">
+                Дата створення або публікації:
+                {{ text.publication_year }}
+            </p>
+        {% endif %}
+
+        <hr class="ph-divider">
+
+        <article class="ph-article">
+
+            <h2 class="ph-section-title">
+                Оригінальний текст
+            </h2>
+
+            <div class="ph-article-text">
+                {{ text.original_content|linebreaks }}
+            </div>
+
+        </article>
+
+        {% if text.translation %}
+
+            <hr class="ph-divider">
+
+            <article class="ph-article">
+
+                <h2 class="ph-section-title">
+                    Переклад
+                </h2>
+
+                <div class="ph-article-text">
+                    {{ text.translation|linebreaks }}
+                </div>
+
+            </article>
+
+        {% endif %}
+
+        <hr class="ph-divider">
+
+        <a href="{% url 'content:text_list' %}"
+           class="ph-back">
+            ← Усі філософські праці
+        </a>
+
+    </div>
+</main>
+{% endblock %}

@@ -4,6 +4,8 @@ from django.views.generic import ListView, DetailView
 
 from . import views
 from .models import Era, Philosopher
+from .text_views import TextListView, TextDetailView
+from .lesson_views import LessonListView, LessonDetailView
 
 
 app_name = "content"
@@ -56,6 +58,19 @@ urlpatterns = [
         name="philosopher_detail",
     ),
 
+    # Філософські праці
+    path(
+        "texts/",
+        TextListView.as_view(),
+        name="text_list",
+    ),
+
+    path(
+        "texts/<int:pk>/",
+        TextDetailView.as_view(),
+        name="text_detail",
+    ),
+
     # Курси
     path(
         "courses/",
@@ -87,25 +102,35 @@ urlpatterns = [
         name="course_delete",
     ),
 
-    # Уроки
+    # Список усіх доступних уроків
+    path(
+        "lessons/",
+        LessonListView.as_view(),
+        name="lesson_list",
+    ),
+
+    # Створення уроку для курсу
     path(
         "courses/<int:course_pk>/lessons/create/",
         views.LessonCreateView.as_view(),
         name="lesson_create",
     ),
 
+    # Перегляд уроку
     path(
         "courses/<int:course_pk>/lessons/<int:lesson_pk>/",
-        views.lesson_detail,
+        LessonDetailView.as_view(),
         name="lesson_detail",
     ),
 
+    # Редагування уроку
     path(
         "lessons/<int:pk>/edit/",
         views.LessonUpdateView.as_view(),
         name="lesson_update",
     ),
 
+    # Видалення уроку
     path(
         "lessons/<int:pk>/delete/",
         views.LessonDeleteView.as_view(),
