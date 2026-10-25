@@ -1,11 +1,36 @@
+
+# Python
 .venv/
-.env
+venv/
 __pycache__/
 *.py[cod]
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
 .idea/
 .vscode/
+
+# Database
 db.sqlite3
-*.log
-.pytest_cache/
+*.sqlite3
+
+# Database backups
+backups/
+philosophy_db.sql
+
+# Django
 staticfiles/
 media/
+
+# Logs and tests
+*.log
+.pytest_cache/
+.coverage
+
+# System files
+.DS_Store
+Thumbs.db

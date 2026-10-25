@@ -1,0 +1,112 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Уроки | Philosophy LMS
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet"
+      href="{% static 'css/philosophy-library.css' %}">
+
+<main class="ph-library">
+    <div class="ph-container">
+
+        <p class="ph-eyebrow">
+            PHILOSOPHY. / НАВЧАЛЬНІ МАТЕРІАЛИ
+        </p>
+
+        <h1 class="ph-heading">
+            Навчальні уроки
+        </h1>
+
+        <p class="ph-intro">
+            Переглядай уроки з філософії,
+            знайомся з мислителями та їхніми ідеями.
+        </p>
+
+        <hr class="ph-divider">
+
+        <div class="ph-grid">
+
+            {% for lesson in lessons %}
+
+                <a href="{% url 'content:lesson_detail' lesson.course.pk lesson.pk %}"
+                   class="ph-card">
+
+                    <span class="ph-card-label">
+                        УРОК {{ lesson.order }}
+                    </span>
+
+                    <h2 class="ph-card-title">
+                        {{ lesson.title }}
+                    </h2>
+
+                    <p class="ph-card-description">
+                        Курс: {{ lesson.course.title }}
+                    </p>
+
+                    {% if lesson.philosopher %}
+                        <p class="ph-card-description">
+                            Філософ: {{ lesson.philosopher.name }}
+                        </p>
+                    {% endif %}
+
+                    <p class="ph-card-description">
+                        {{ lesson.content|striptags|truncatewords:25 }}
+                    </p>
+
+                    <div class="ph-card-bottom">
+                        Перейти до уроку ↗
+                    </div>
+
+                </a>
+
+            {% empty %}
+
+                <p class="ph-intro">
+                    Доступних уроків поки немає.
+                    Їх можна додати через Django Admin.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+        {% if is_paginated %}
+
+            <nav class="d-flex justify-content-center align-items-center gap-3 mt-5"
+                 aria-label="Навігація сторінками уроків">
+
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}"
+                       class="ph-back">
+                        ← Назад
+                    </a>
+                {% endif %}
+
+                <span class="ph-intro">
+                    Сторінка {{ page_obj.number }}
+                    з {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}"
+                       class="ph-back">
+                        Далі →
+                    </a>
+                {% endif %}
+
+            </nav>
+
+        {% endif %}
+
+        <a href="{% url 'content:course_list' %}"
+           class="ph-back">
+            ← До списку курсів
+        </a>
+
+    </div>
+</main>
+{% endblock %}

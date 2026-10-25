@@ -1,10 +1,219 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
 
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}
+    Особистий кабінет | Philosophy LMS
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .dashboard {
+        min-height: 80vh;
+        padding: 70px 24px;
+        background: #101318;
+        color: #e8e8e8;
+    }
+
+    .dashboard-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .dashboard-label {
+        color: #a3a3a3;
+        font-size: 12px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
+
+    .dashboard-title {
+        font-size: clamp(32px, 5vw, 52px);
+        font-weight: 600;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    .dashboard-text {
+        color: #b0b0b0;
+        line-height: 1.7;
+    }
+
+    .dashboard-card {
+        background: #191d24;
+        border: 1px solid #343943;
+        border-radius: 10px;
+        padding: 26px;
+        margin-top: 20px;
+    }
+
+    .dashboard-card h3 {
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+
+    .dashboard-button {
+        display: inline-block;
+        padding: 11px 20px;
+        margin-top: 15px;
+        border: 1px solid #69788a;
+        border-radius: 5px;
+        background: transparent;
+        color: #e8e8e8;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .dashboard-button:hover {
+        background: #28313b;
+        color: #ffffff;
+    }
+
+    .dashboard-course {
+        padding: 18px 0;
+        border-bottom: 1px solid #343943;
+    }
+
+    .dashboard-course:last-child {
+        border-bottom: none;
+    }
+
+    .dashboard-course a {
+        color: #d4dfeb;
+        text-decoration: none;
+    }
+
+    .dashboard-course a:hover {
+        text-decoration: underline;
+    }
+
+    .dashboard-logout {
+        margin-top: 35px;
+    }
+</style>
+
+<main class="dashboard">
+    <div class="dashboard-container">
+
+        <p class="dashboard-label">
+            PHILOSOPHY LMS / ПРОФІЛЬ
+        </p>
+
+        <h1 class="dashboard-title">
+            Особистий кабінет
+        </h1>
+
+        <p class="dashboard-text">
+            Вітаємо, {{ request.user.username }}!
+        </p>
+
+        {% if request.user.is_superuser %}
+            <p class="dashboard-text">
+                Роль: Адміністратор
+            </p>
+        {% elif request.user.is_teacher %}
+            <p class="dashboard-text">
+                Роль: Викладач
+            </p>
+        {% else %}
+            <p class="dashboard-text">
+                Роль: Студент
+            </p>
+        {% endif %}
+
+        <div class="dashboard-card">
+
+            <h3>Мій профіль</h3>
+
+            <p class="dashboard-text">
+                Ім'я користувача:
+                {{ request.user.username }}
+            </p>
+
+            <p class="dashboard-text">
+                Email:
+                {{ request.user.email|default:"Не вказано" }}
+            </p>
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <h3>Мої курси</h3>
+
+            <p class="dashboard-text">
+                Загальна кількість: {{ total_courses }}
+            </p>
+
+            {% for course in courses %}
+
+                <div class="dashboard-course">
+
+                    <h4>{{ course.title }}</h4>
+
+                    <p class="dashboard-text">
+                        Статус: {{ course.get_status_display }}
+                    </p>
+
+                    <a href="{% url 'content:course_detail' course.pk %}">
+                        Переглянути курс →
+                    </a>
+
+                </div>
+
+            {% empty %}
+
+                <p class="dashboard-text">
+                    Ви поки не створили жодного курсу.
+                </p>
+
+            {% endfor %}
+
+            {% if request.user.is_teacher or request.user.is_superuser %}
+                <a href="{% url 'content:course_create' %}"
+                   class="dashboard-button">
+                    + Створити курс
+                </a>
+            {% endif %}
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <h3>Навчальні матеріали</h3>
+
+            <p class="dashboard-text">
+                Переглядайте доступні курси, уроки
+                та філософські праці.
+            </p>
+
+            <a href="{% url 'content:course_list' %}"
+               class="dashboard-button">
+                Переглянути курси
+            </a>
+
+            <a href="{% url 'content:lesson_list' %}"
+               class="dashboard-button">
+                Переглянути уроки
+            </a>
+
+        </div>
+
+        <form method="post"
+              action="{% url 'users:logout' %}"
+              class="dashboard-logout">
+
+            {% csrf_token %}
+
+            <button type="submit"
+                    class="dashboard-button">
+                Вийти з акаунта
+            </button>
+
+        </form>
+
+    </div>
+</main>
+
+{% endblock %}

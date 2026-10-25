@@ -1,10 +1,175 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
 
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}
+    Вхід | Philosophy LMS
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .login-page {
+        min-height: 85vh;
+        background: #101318;
+        color: #e8e8e8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 60px 20px;
+    }
+
+    .login-box {
+        width: 100%;
+        max-width: 460px;
+        padding: 40px;
+        background: #191d24;
+        border: 1px solid #343943;
+        border-radius: 10px;
+    }
+
+    .login-label {
+        color: #a3a3a3;
+        font-size: 12px;
+        letter-spacing: 3px;
+    }
+
+    .login-title {
+        font-size: 32px;
+        margin: 15px 0 10px;
+    }
+
+    .login-description {
+        color: #aaa;
+        margin-bottom: 30px;
+    }
+
+    .login-field {
+        margin-bottom: 20px;
+    }
+
+    .login-field label {
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .login-field input {
+        width: 100%;
+        padding: 12px;
+        background: #101318;
+        color: white;
+        border: 1px solid #454b55;
+        border-radius: 5px;
+    }
+
+    .login-field input:focus {
+        border-color: #a2b3c8;
+        outline: none;
+    }
+
+    .login-error {
+        color: #ff9999;
+        margin-bottom: 18px;
+        font-size: 14px;
+    }
+
+    .login-button {
+        width: 100%;
+        padding: 13px;
+        margin-top: 10px;
+        background: #344254;
+        border: 1px solid #69788a;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+    }
+
+    .login-button:hover {
+        background: #45576d;
+    }
+
+    .login-footer {
+        text-align: center;
+        margin-top: 25px;
+        color: #aaa;
+    }
+
+    .login-footer a {
+        color: #d0deed;
+        text-decoration: none;
+    }
+</style>
+
+<main class="login-page">
+
+    <div class="login-box">
+
+        <p class="login-label">
+            PHILOSOPHY LMS / ACCOUNT
+        </p>
+
+        <h1 class="login-title">
+            Вхід
+        </h1>
+
+        <p class="login-description">
+            Увійдіть у свій акаунт,
+            щоб продовжити навчання.
+        </p>
+
+        <form method="post"
+              action="{% url 'users:login' %}">
+
+            {% csrf_token %}
+
+            {% url 'users:dashboard' as dashboard_url %}
+            <input type="hidden"
+                   name="next"
+                   value="{{ next|default:dashboard_url }}">
+
+            {% if form.non_field_errors %}
+                <div class="login-error">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% for field in form %}
+
+                <div class="login-field">
+
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% for error in field.errors %}
+                        <p class="login-error">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+            {% endfor %}
+
+            <button type="submit"
+                    class="login-button">
+                Увійти
+            </button>
+
+        </form>
+
+        <p class="login-footer">
+            Ще немає акаунта?
+            <a href="{% url 'users:register' %}">
+                Зареєструватися
+            </a>
+        </p>
+
+    </div>
+
+</main>
+
+{% endblock %}
