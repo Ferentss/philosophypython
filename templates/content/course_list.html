@@ -7,61 +7,189 @@
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/learning.css' %}">
 
+<style>
+    .course-search {
+        display: flex;
+        gap: 12px;
+        max-width: 650px;
+        margin: 35px 0 45px;
+    }
+
+    .course-search input {
+        flex: 1;
+        min-width: 0;
+        padding: 15px 18px;
+        background: #171d25;
+        border: 1px solid #485362;
+        color: #ffffff;
+        border-radius: 3px;
+    }
+
+    .course-search input:focus {
+        outline: none;
+        border-color: #aebfd0;
+    }
+
+    .course-search button,
+    .course-create-link {
+        display: inline-block;
+        padding: 15px 25px;
+        background: #dce3ea;
+        color: #10151c;
+        border: none;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .course-search button:hover,
+    .course-create-link:hover {
+        background: #ffffff;
+        color: #10151c;
+    }
+
+    .course-create-link {
+        margin-bottom: 35px;
+    }
+
+    .course-empty {
+        padding: 45px 0;
+        color: #aeb9c5;
+    }
+
+    .course-pagination {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        margin-top: 60px;
+    }
+
+    .course-pagination a {
+        color: #dce3ea;
+        text-decoration: none;
+        border: 1px solid #485362;
+        padding: 12px 18px;
+    }
+
+    .course-pagination a:hover {
+        background: #222c37;
+    }
+
+    .course-pagination span {
+        color: #aeb9c5;
+        font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+        .course-search {
+            flex-direction: column;
+        }
+    }
+</style>
+
 <main class="library-page">
     <div class="container">
+
         <header class="library-header">
             <span class="library-kicker">
-                PHILOSOPHY. / БІБЛІОТЕКА ЗНАНЬ
+                PHILOSOPHY. / БІБЛІОТЕКА
             </span>
 
             <h1>Шлях до <em>пізнання.</em></h1>
 
             <p>
-                Досліджуй філософські епохи, ідеї та мислителів.
-                Обирай курс, щоб розпочати навчання.
+                Обери навчальний курс і почни
+                знайомство з історією філософії.
             </p>
         </header>
 
-        <section class="library-grid" aria-label="Каталог курсів">
-            {% for course in courses %}
-                <a
-                    href="{% url 'content:course_detail' course.pk %}"
-                    class="library-card"
-                    aria-label="Відкрити курс {{ course.title }}"
-                >
-                    <div class="library-card-head">
-                        <span>НАВЧАЛЬНИЙ КУРС</span>
-                        <span>{{ forloop.counter|stringformat:"02d" }}</span>
-                    </div>
+        <form method="get" class="course-search"
+              action="{% url 'content:course_list' %}">
 
-                    <div class="library-card-content">
-                        <span class="library-symbol">Φ</span>
+            {{ search_form.query }}
 
-                        <h2>{{ course.title }}</h2>
+            <button type="submit">
+                Знайти курс
+            </button>
+        </form>
 
-                        <p>
-                            {{ course.description|striptags|truncatewords:27 }}
-                        </p>
-                    </div>
-
-                    <div class="library-card-foot">
-                        <span>ВІДКРИТИ КУРС</span>
-                        <span aria-hidden="true">↗</span>
-                    </div>
+        {% if user.is_authenticated %}
+            {% if user.is_teacher or user.is_superuser %}
+                <a href="{% url 'content:course_create' %}"
+                   class="course-create-link">
+                    + Створити курс
                 </a>
-            {% empty %}
-                <div class="library-empty">
-                    <span class="library-kicker">АРХІВ ЗНАНЬ</span>
+            {% endif %}
+        {% endif %}
 
-                    <h2>Курсів поки немає.</h2>
+        <section class="library-grid">
+
+            {% for course in courses %}
+
+                <a href="{% url 'content:course_detail' course.pk %}"
+                   class="library-card">
+
+                    <div class="library-card-top">
+                        <span>
+                            КУРС / {{ forloop.counter }}
+                        </span>
+                    </div>
+
+                    <h2>{{ course.title }}</h2>
 
                     <p>
-                        Коли викладач додасть новий курс,
-                        він автоматично з'явиться тут.
+                        {{ course.description|truncatewords:30 }}
                     </p>
+
+                    <div class="library-card-bottom">
+                        <span>Переглянути курс</span>
+                        <span>↗</span>
+                    </div>
+
+                </a>
+
+            {% empty %}
+
+                <div class="course-empty">
+                    {% if search_query %}
+                        За запитом «{{ search_query }}»
+                        курсів не знайдено.
+                    {% else %}
+                        Опублікованих курсів поки немає.
+                    {% endif %}
                 </div>
+
             {% endfor %}
+
         </section>
+
+        {% if is_paginated %}
+            <nav class="course-pagination"
+                 aria-label="Сторінки курсів">
+
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}&amp;query={{ search_query|urlencode }}">
+                        ← Назад
+                    </a>
+                {% endif %}
+
+                <span>
+                    Сторінка {{ page_obj.number }}
+                    з {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}&amp;query={{ search_query|urlencode }}">
+                        Далі →
+                    </a>
+                {% endif %}
+
+            </nav>
+        {% endif %}
+
     </div>
 </main>
 {% endblock %}

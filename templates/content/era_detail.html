@@ -43,35 +43,33 @@
             Мислителі цієї епохи
         </h2>
 
-        {% if philosophers %}
         <div class="ph-grid">
-            {% for philosopher in philosophers %}
-            <a href="{% url 'content:philosopher_detail' philosopher.pk %}"
-               class="ph-card">
+            {% for philosopher in era.philosophers.all %}
+                <a href="{% url 'content:philosopher_detail' philosopher.pk %}"
+                   class="ph-card">
 
-                <span class="ph-card-label">
-                    Філософ
-                </span>
+                    <span class="ph-card-label">
+                        Філософ
+                    </span>
 
-                <h3 class="ph-card-title">
-                    {{ philosopher.name }}
-                </h3>
+                    <h3 class="ph-card-title">
+                        {{ philosopher.name }}
+                    </h3>
 
-                <p class="ph-card-description">
-                    {{ philosopher.biography|truncatewords:25 }}
+                    <p class="ph-card-description">
+                        {{ philosopher.biography|truncatewords:25 }}
+                    </p>
+
+                    <div class="ph-card-bottom">
+                        Читати біографію ↗
+                    </div>
+                </a>
+            {% empty %}
+                <p class="ph-intro">
+                    Для цієї епохи поки немає філософів.
                 </p>
-
-                <div class="ph-card-bottom">
-                    Читати біографію ↗
-                </div>
-            </a>
             {% endfor %}
         </div>
-        {% else %}
-        <p class="ph-intro">
-            Для цієї епохи поки немає філософів.
-        </p>
-        {% endif %}
 
         <a href="{% url 'content:era_list' %}" class="ph-back">
             ← Усі епохи

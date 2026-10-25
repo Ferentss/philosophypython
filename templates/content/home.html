@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 {% load static %}
 
@@ -100,7 +101,11 @@
 
             <div class="epoch-list">
                 {% for era in eras %}
-                    <article class="epoch-row">
+                    <a href="{% url 'content:era_detail' era.pk %}"
+                       class="epoch-row"
+                       style="color: inherit; text-decoration: none;"
+                       aria-label="Переглянути епоху {{ era.title }}">
+
                         <span class="epoch-number">
                             {{ forloop.counter|stringformat:"02d" }}
                         </span>
@@ -125,7 +130,7 @@
                                 ?
                             {% endif %}
                         </span>
-                    </article>
+                    </a>
                 {% empty %}
                     <div class="section-empty">
                         <h3>Історія ще наповнюється.</h3>
@@ -199,6 +204,7 @@
                 {% for philosopher in philosophers %}
                     <a href="{% url 'content:philosopher_detail' philosopher.pk %}"
                        class="thinker-entry philosopher-directory-link">
+
                         <span class="thinker-index">
                             {{ forloop.counter|stringformat:"02d" }}
                         </span>
@@ -210,7 +216,9 @@
                         <div class="thinker-details">
                             <span>{{ philosopher.era.title }}</span>
                             <h3>{{ philosopher.name }}</h3>
-                            <p>{{ philosopher.biography|striptags|truncatewords:35 }}</p>
+                            <p>
+                                {{ philosopher.biography|striptags|truncatewords:35 }}
+                            </p>
                         </div>
 
                         <span class="thinker-date">
@@ -222,7 +230,10 @@
                 {% empty %}
                     <div class="section-empty">
                         <h3>Мислителі незабаром.</h3>
-                        <p>Додай філософів у Django Admin — вони з'являться тут автоматично.</p>
+                        <p>
+                            Додай філософів у Django Admin —
+                            вони з'являться тут автоматично.
+                        </p>
                     </div>
                 {% endfor %}
             </div>
@@ -305,7 +316,8 @@
                         та проходь уроки у зручному порядку.
                     </p>
 
-                    <a href="{% url 'content:course_list' %}" class="primary-action">
+                    <a href="{% url 'content:course_list' %}"
+                       class="primary-action">
                         Відкрити бібліотеку курсів
                         <span>↗</span>
                     </a>
@@ -350,7 +362,8 @@
                 <em>Навчися мислити.</em>
             </h2>
 
-            <a href="{% url 'content:course_list' %}" class="quiet-closing-link">
+            <a href="{% url 'content:course_list' %}"
+               class="quiet-closing-link">
                 УВІЙТИ ДО БІБЛІОТЕКИ ↗
             </a>
         </div>

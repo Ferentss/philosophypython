@@ -2,80 +2,217 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Мислителі — Philosophy.{% endblock %}
+
 {% block content %}
-<link rel="stylesheet" href="{% static 'css/philosophy-library.css' %}">
 
-<main class="ph-library">
-    <div class="ph-container">
-        <p class="ph-eyebrow">
-            04 / ВЕЛИКІ МИСЛИТЕЛІ
-        </p>
+<style>
+    .thinkers-page {
+        min-height: 85vh;
+        padding: 90px 0 130px;
+        background: #0b0d11;
+        color: #e9e8e5;
+    }
 
-        <h1 class="ph-heading">
-            Люди, що <em>мислили інакше.</em>
-        </h1>
+    .thinkers-back {
+        display: inline-block;
+        margin-bottom: 65px;
+        color: #aebdcd;
+        text-decoration: none;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
 
-        <p class="ph-intro">
-            Відкрийте для себе історії філософів,
-            чиї ідеї пережили століття та вплинули
-            на розвиток людської цивілізації.
-        </p>
+    .thinkers-header {
+        max-width: 850px;
+        margin-bottom: 80px;
+    }
 
-        <hr class="ph-divider">
+    .thinkers-label {
+        color: #9cafc4;
+        font-size: 11px;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
 
-        {% if philosophers %}
-        <div class="ph-grid">
-            {% for philosopher in philosophers %}
-            <a href="{% url 'content:philosopher_detail' philosopher.pk %}"
-               class="ph-card">
+    .thinkers-header h1 {
+        margin: 25px 0;
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(65px, 9vw, 120px);
+        font-weight: 400;
+        line-height: 0.95;
+    }
 
-                <span class="ph-card-label">
-                    {{ philosopher.era.title }}
-                </span>
+    .thinkers-header h1 em {
+        color: #a5b8cd;
+        font-weight: 400;
+    }
 
-                <h2 class="ph-card-title">
-                    {{ philosopher.name }}
-                </h2>
+    .thinkers-header p {
+        max-width: 560px;
+        color: #abb6c4;
+        line-height: 1.9;
+        font-size: 15px;
+    }
 
-                <p class="ph-card-description">
-                    {{ philosopher.biography|truncatewords:28 }}
-                </p>
+    .thinkers-list {
+        border-top: 1px solid #39434e;
+    }
 
-                <div class="ph-card-bottom">
-                    Відкрити біографію ↗
-                </div>
-            </a>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="ph-empty">
-            <h2>Мислителі незабаром.</h2>
-            <p>
-                Біографії з'являться після наповнення
-                філософської бібліотеки.
-            </p>
-        </div>
-        {% endif %}
+    .thinker-card {
+        display: grid;
+        grid-template-columns: 60px 90px 1fr 40px;
+        align-items: center;
+        gap: 25px;
+        padding: 35px 20px;
+        border-bottom: 1px solid #39434e;
+        text-decoration: none;
+        color: #e9e8e5;
+        transition: background 0.2s ease;
+    }
 
-        {% if is_paginated %}
-        <nav class="ph-pagination" aria-label="Сторінки філософів">
-            {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}">
-                ← Назад
-            </a>
-            {% endif %}
+    .thinker-card:hover {
+        background: #171d25;
+        color: #fff;
+    }
 
-            <span>
-                {{ page_obj.number }} / {{ paginator.num_pages }}
+    .thinker-number {
+        color: #7f91a5;
+        font-size: 12px;
+    }
+
+    .thinker-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 80px;
+        height: 80px;
+        background: #27313d;
+        color: #c7d4e3;
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 46px;
+    }
+
+    .thinker-info h2 {
+        margin: 0 0 12px;
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: 35px;
+        font-weight: 400;
+    }
+
+    .thinker-info p {
+        margin: 0;
+        font-size: 12px;
+        color: #9eafc1;
+    }
+
+    .thinker-arrow {
+        color: #a5b8cd;
+        font-size: 27px;
+        text-align: right;
+    }
+
+    .thinkers-empty {
+        padding: 55px 0;
+        color: #aab5c2;
+    }
+
+    @media (max-width: 650px) {
+        .thinkers-page {
+            padding: 55px 0 85px;
+        }
+
+        .thinker-card {
+            grid-template-columns: 35px 55px 1fr;
+            gap: 12px;
+            padding: 22px 5px;
+        }
+
+        .thinker-avatar {
+            width: 55px;
+            height: 55px;
+            font-size: 32px;
+        }
+
+        .thinker-info h2 {
+            font-size: 26px;
+        }
+
+        .thinker-arrow {
+            display: none;
+        }
+    }
+</style>
+
+<main class="thinkers-page">
+    <div class="container">
+
+        <a href="{% url 'content:home' %}"
+           class="thinkers-back">
+            ← НА ГОЛОВНУ
+        </a>
+
+        <header class="thinkers-header">
+            <span class="thinkers-label">
+                PHILOSOPHY. / ІСТОРІЯ ДУМКИ
             </span>
 
-            {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">
-                Далі →
-            </a>
-            {% endif %}
-        </nav>
-        {% endif %}
+            <h1>Великі <em>мислителі.</em></h1>
+
+            <p>
+                Від античності до сучасності.
+                Досліджуй життя та ідеї філософів,
+                які змінили наше розуміння людини,
+                суспільства й навколишнього світу.
+            </p>
+        </header>
+
+        <section class="thinkers-list">
+
+            {% for philosopher in philosophers %}
+
+                <a href="{% url 'content:philosopher_detail' philosopher.pk %}"
+                   class="thinker-card">
+
+                    <span class="thinker-number">
+                        {{ forloop.counter|stringformat:"02d" }}
+                    </span>
+
+                    <div class="thinker-avatar">
+                        {{ philosopher.name|slice:":1" }}
+                    </div>
+
+                    <div class="thinker-info">
+                        <h2>{{ philosopher.name }}</h2>
+
+                        <p>
+                            {{ philosopher.era.title }}
+
+                            {% if philosopher.birth_year %}
+                                · {{ philosopher.birth_year }}
+                                {% if philosopher.death_year %}
+                                    — {{ philosopher.death_year }}
+                                {% endif %}
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <span class="thinker-arrow">↗</span>
+
+                </a>
+
+            {% empty %}
+
+                <div class="thinkers-empty">
+                    Філософів поки немає.
+                    Додай їх через адміністративну панель Django.
+                </div>
+
+            {% endfor %}
+
+        </section>
+
     </div>
 </main>
+
 {% endblock %}

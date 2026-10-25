@@ -1,33 +1,58 @@
 
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    UserPassesTestMixin,
+)
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DeleteView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 
-from .forms import CourseForm, LessonForm
+from .forms import CourseForm, CourseSearchForm, LessonForm
 from .models import Course, Era, Lesson, Philosopher
 
 
 def visible_courses(user):
-    queryset = Course.objects.all()
+    courses = Course.objects.all()
 
     if user.is_authenticated:
         if user.is_superuser:
-            return queryset
+            return courses
 
-        return queryset.filter(
+        return courses.filter(
             Q(status=Course.Status.PUBLISHED)
             | Q(owner=user)
         )
 
-    return queryset.filter(status=Course.Status.PUBLISHED)
+    return courses.filter(status=Course.Status.PUBLISHED)
+
+
+def can_manage_course(user, course):
+    if not user.is_authenticated:
+        return False
+
+    if user.is_superuser:
+        return True
+
+    return (
+        getattr(user, "is_teacher", False)
+        and course.owner_id == user.pk
+    )
 
 
 def home(request):
     eras = Era.objects.all().order_by("start_year")[:5]
-    philosophers = Philosopher.objects.select_related("era").all()[:4]
+
+    philosophers = Philosopher.objects.select_related(
+        "era"
+    ).all()[:4]
 
     courses = Course.objects.filter(
         status=Course.Status.PUBLISHED
@@ -40,53 +65,92 @@ def home(request):
     })
 
 
-def philosopher_list(request):
-    philosophers = Philosopher.objects.select_related(
-        "era"
-    ).order_by("name")
+class CourseListView(ListView):
+    model = Course
+    template_name = "content/course_list.html"
+    context_object_name = "courses"
+    paginate_by = 6
 
-    return render(request, "content/philosopher_list.html", {
-        "philosophers": philosophers,
-    })
+    def get_queryset(self):
+        courses = Course.objects.filter(
+            status=Course.Status.PUBLISHED
+        ).order_by("-created_at")
 
+        self.search_form = CourseSearchForm(self.request.GET)
 
-def course_list(request):
-    courses = Course.objects.filter(
-        status=Course.Status.PUBLISHED
-    ).order_by("-created_at")
+        if self.search_form.is_valid():
+            query = self.search_form.cleaned_data["query"]
 
-    return render(request, "content/course_list.html", {
-        "courses": courses,
-    })
+            if query:
+                courses = courses.filter(
+                    Q(title__icontains=query)
+                    | Q(description__icontains=query)
+                )
 
+        return courses
 
-def course_detail(request, pk):
-    course = get_object_or_404(
-        visible_courses(request.user),
-        pk=pk,
-    )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-    lessons = course.lessons.select_related(
-        "philosopher"
-    ).order_by("order", "pk")
+        context["search_form"] = self.search_form
 
-    can_manage = (
-        request.user.is_authenticated
-        and (
-            request.user.is_superuser
-            or (
-                getattr(request.user, "is_teacher", False)
-                and course.owner_id == request.user.pk
+        if self.search_form.is_valid():
+            context["search_query"] = (
+                self.search_form.cleaned_data["query"]
             )
-        )
-    )
+        else:
+            context["search_query"] = ""
 
-    return render(request, "content/course_detail.html", {
-        "course": course,
-        "lessons": lessons,
-        "lesson_count": lessons.count(),
-        "can_manage": can_manage,
-    })
+        return context
+
+
+class CourseDetailView(DetailView):
+    model = Course
+    template_name = "content/course_detail.html"
+    context_object_name = "course"
+
+    def get_queryset(self):
+        return visible_courses(self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        lessons = list(
+            self.object.lessons.select_related(
+                "philosopher"
+            ).order_by("order", "pk")
+        )
+
+        context["lessons"] = lessons
+        context["lesson_count"] = len(lessons)
+        context["can_manage"] = can_manage_course(
+            self.request.user,
+            self.object,
+        )
+
+        return context
+
+
+class PhilosopherListView(ListView):
+    model = Philosopher
+    template_name = "content/philosopher_list.html"
+    context_object_name = "philosophers"
+
+    def get_queryset(self):
+        return Philosopher.objects.select_related(
+            "era"
+        ).order_by("name")
+
+
+class PhilosopherDetailView(DetailView):
+    model = Philosopher
+    template_name = "content/philosopher_detail.html"
+    context_object_name = "philosopher"
+
+    def get_queryset(self):
+        return Philosopher.objects.select_related(
+            "era"
+        ).prefetch_related("texts")
 
 
 def lesson_detail(request, course_pk, lesson_pk):
@@ -118,27 +182,22 @@ def lesson_detail(request, course_pk, lesson_pk):
 
             break
 
-    can_manage = (
-        request.user.is_authenticated
-        and (
-            request.user.is_superuser
-            or (
-                getattr(request.user, "is_teacher", False)
-                and course.owner_id == request.user.pk
-            )
-        )
-    )
-
     return render(request, "content/lesson_detail.html", {
         "course": course,
         "lesson": lesson,
         "previous_lesson": previous_lesson,
         "next_lesson": next_lesson,
-        "can_manage": can_manage,
+        "can_manage": can_manage_course(
+            request.user,
+            course,
+        ),
     })
 
 
-class TeacherRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+class TeacherRequiredMixin(
+    LoginRequiredMixin,
+    UserPassesTestMixin,
+):
     def test_func(self):
         user = self.request.user
 
@@ -161,22 +220,22 @@ class TeacherRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
 
 class OwnedCourseMixin(TeacherRequiredMixin):
     def get_queryset(self):
-        queryset = Course.objects.all()
+        courses = Course.objects.all()
 
         if self.request.user.is_superuser:
-            return queryset
+            return courses
 
-        return queryset.filter(owner=self.request.user)
+        return courses.filter(owner=self.request.user)
 
 
 class OwnedLessonMixin(TeacherRequiredMixin):
     def get_queryset(self):
-        queryset = Lesson.objects.select_related("course")
+        lessons = Lesson.objects.select_related("course")
 
         if self.request.user.is_superuser:
-            return queryset
+            return lessons
 
-        return queryset.filter(
+        return lessons.filter(
             course__owner=self.request.user
         )
 
@@ -225,12 +284,9 @@ class LessonCreateView(TeacherRequiredMixin, CreateView):
             pk=kwargs["course_pk"],
         )
 
-        if (
-            self.course.owner_id != request.user.pk
-            and not request.user.is_superuser
-        ):
+        if not can_manage_course(request.user, self.course):
             raise PermissionDenied(
-                "Ти не можеш додавати уроки до чужого курсу."
+                "Ти не можеш змінювати чужий курс."
             )
 
         return super().dispatch(request, *args, **kwargs)
@@ -272,3 +328,8 @@ class LessonDeleteView(OwnedLessonMixin, DeleteView):
             "content:course_detail",
             kwargs={"pk": self.object.course_id},
         )
+
+
+course_list = CourseListView.as_view()
+course_detail = CourseDetailView.as_view()
+philosopher_list = PhilosopherListView.as_view()
