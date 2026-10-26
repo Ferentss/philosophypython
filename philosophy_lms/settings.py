@@ -29,10 +29,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "content",
     "users",
     "progress",
+    "social_django",
+    "django_extensions",
 ]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -42,9 +46,14 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+    # Обробка помилок соціальної авторизації
+    "social_django.middleware.SocialAuthExceptionMiddleware",
 ]
 
+
 ROOT_URLCONF = "philosophy_lms.urls"
+
 
 TEMPLATES = [
     {
@@ -57,15 +66,22 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+
+                # Python Social Auth
+                "social_django.context_processors.backends",
+                "social_django.context_processors.login_redirect",
             ],
         },
     },
 ]
 
+
 WSGI_APPLICATION = "philosophy_lms.wsgi.application"
 
 ASGI_APPLICATION = "philosophy_lms.asgi.application"
 
+
+# База даних MySQL (залишаємо без змін)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
@@ -80,7 +96,10 @@ DATABASES = {
     }
 }
 
+
+# Користувачі
 AUTH_USER_MODEL = "users.CustomUser"
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -97,6 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
 LANGUAGE_CODE = "uk"
 
 TIME_ZONE = "Europe/Kyiv"
@@ -105,11 +125,52 @@ USE_I18N = True
 
 USE_TZ = True
 
+
+# Статичні файли
 STATIC_URL = "static/"
+
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+
+# Звичайна авторизація
 LOGIN_URL = "users:login"
+
 LOGIN_REDIRECT_URL = "users:dashboard"
+
 LOGOUT_REDIRECT_URL = "content:home"
+
+
+# Авторизація через Google
+AUTHENTICATION_BACKENDS = [
+    "social_core.backends.google.GoogleOAuth2",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+
+# Google OAuth2 — ключі беремо з .env
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv(
+    "GOOGLE_CLIENT_ID", ""
+)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv(
+    "GOOGLE_CLIENT_SECRET", ""
+)
+
+
+# Дані, які отримуємо від Google
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/userinfo.profile",
+]
+
+
+# Після успішного входу
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = "users:dashboard"
+
+# Якщо Google повернув помилку
+SOCIAL_AUTH_LOGIN_ERROR_URL = "/users/login/"
+
+# Рекомендовано для MySQL
+SOCIAL_AUTH_UID_LENGTH = 223

@@ -1,0 +1,152 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+    {% if object %}Редагування уроку{% else %}Створення уроку{% endif %}
+    | Philosophy LMS
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .lesson-page {
+        min-height: 80vh;
+        padding: 60px 20px;
+        background: #101318;
+        color: #e8e8e8;
+    }
+
+    .lesson-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .lesson-title {
+        font-size: 34px;
+        margin-bottom: 12px;
+    }
+
+    .lesson-description {
+        color: #aaa;
+        margin-bottom: 30px;
+    }
+
+    .lesson-form {
+        padding: 30px;
+        background: #191d24;
+        border: 1px solid #343943;
+        border-radius: 10px;
+    }
+
+    .lesson-field {
+        margin-bottom: 22px;
+    }
+
+    .lesson-field label {
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    .lesson-field input,
+    .lesson-field textarea,
+    .lesson-field select {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        background: #101318;
+        color: #fff;
+        border: 1px solid #454b55;
+        border-radius: 5px;
+    }
+
+    .lesson-field textarea {
+        min-height: 180px;
+    }
+
+    .lesson-error {
+        color: #ff9999;
+        margin-top: 8px;
+        font-size: 14px;
+    }
+
+    .lesson-button {
+        padding: 12px 24px;
+        background: #344254;
+        color: #fff;
+        border: 1px solid #69788a;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .lesson-button:hover {
+        background: #45576d;
+    }
+
+    .lesson-back {
+        display: inline-block;
+        margin-top: 25px;
+        color: #c5d4e4;
+        text-decoration: none;
+    }
+</style>
+
+<main class="lesson-page">
+    <div class="lesson-container">
+
+        <h1 class="lesson-title">
+            {% if object %}
+                Редагування уроку
+            {% else %}
+                Створення уроку
+            {% endif %}
+        </h1>
+
+        <p class="lesson-description">
+            Заповніть інформацію про навчальний урок.
+        </p>
+
+        <form method="post" class="lesson-form">
+
+            {% csrf_token %}
+
+            {% for error in form.non_field_errors %}
+                <p class="lesson-error">{{ error }}</p>
+            {% endfor %}
+
+            {% for field in form %}
+
+                <div class="lesson-field">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% for error in field.errors %}
+                        <p class="lesson-error">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+                </div>
+
+            {% endfor %}
+
+            <button type="submit" class="lesson-button">
+                {% if object %}
+                    Зберегти зміни
+                {% else %}
+                    Створити урок
+                {% endif %}
+            </button>
+
+        </form>
+
+        <a href="{% url 'content:course_list' %}"
+           class="lesson-back">
+            ← До списку курсів
+        </a>
+
+    </div>
+</main>
+
+{% endblock %}

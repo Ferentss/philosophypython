@@ -41,6 +41,7 @@
     .login-description {
         color: #aaa;
         margin-bottom: 30px;
+        line-height: 1.6;
     }
 
     .login-field {
@@ -53,6 +54,7 @@
     }
 
     .login-field input {
+        box-sizing: border-box;
         width: 100%;
         padding: 12px;
         background: #101318;
@@ -80,22 +82,91 @@
         border: 1px solid #69788a;
         border-radius: 5px;
         color: white;
+        font-size: 15px;
         cursor: pointer;
+        transition: background 0.2s;
     }
 
     .login-button:hover {
         background: #45576d;
     }
 
+    .login-divider {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 25px 0;
+        color: #888;
+        font-size: 13px;
+    }
+
+    .login-divider::before,
+    .login-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #343943;
+    }
+
+    .google-button {
+        width: 100%;
+        padding: 13px;
+        background: #232933;
+        color: #f0f0f0;
+        border: 1px solid #69788a;
+        border-radius: 5px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        font-size: 15px;
+        transition: background 0.2s;
+    }
+
+    .google-button:hover {
+        background: #344254;
+    }
+
+    .google-icon {
+        font-size: 23px;
+        font-weight: bold;
+        background: linear-gradient(
+            45deg,
+            #4285f4 25%,
+            #34a853 45%,
+            #fbbc05 65%,
+            #ea4335 85%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
     .login-footer {
         text-align: center;
         margin-top: 25px;
         color: #aaa;
+        font-size: 14px;
     }
 
     .login-footer a {
         color: #d0deed;
         text-decoration: none;
+    }
+
+    .login-footer a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+        .login-box {
+            padding: 25px;
+        }
+
+        .login-title {
+            font-size: 28px;
+        }
     }
 </style>
 
@@ -116,12 +187,14 @@
             щоб продовжити навчання.
         </p>
 
+        {% url 'users:dashboard' as dashboard_url %}
+
+        <!-- Звичайний вхід -->
         <form method="post"
               action="{% url 'users:login' %}">
 
             {% csrf_token %}
 
-            {% url 'users:dashboard' as dashboard_url %}
             <input type="hidden"
                    name="next"
                    value="{{ next|default:dashboard_url }}">
@@ -157,6 +230,35 @@
             <button type="submit"
                     class="login-button">
                 Увійти
+            </button>
+
+        </form>
+
+        <!-- Роздільник -->
+        <div class="login-divider">
+            або
+        </div>
+
+        <!-- Вхід через Google -->
+        <form method="post"
+              action="{% url 'social:begin' 'google-oauth2' %}">
+
+            {% csrf_token %}
+
+            <input type="hidden"
+                   name="next"
+                   value="{{ next|default:dashboard_url }}">
+
+            <button type="submit"
+                    class="google-button">
+
+                <span class="google-icon"
+                      aria-hidden="true">G</span>
+
+                <span>
+                    Продовжити через Google
+                </span>
+
             </button>
 
         </form>

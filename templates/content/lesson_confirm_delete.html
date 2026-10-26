@@ -1,0 +1,101 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+    Видалення уроку | Philosophy LMS
+{% endblock %}
+
+{% block content %}
+
+<style>
+    .delete-page {
+        min-height: 80vh;
+        background: #101318;
+        color: #e8e8e8;
+        padding: 80px 20px;
+    }
+
+    .delete-container {
+        max-width: 650px;
+        margin: 0 auto;
+        padding: 35px;
+        background: #191d24;
+        border: 1px solid #343943;
+        border-radius: 10px;
+    }
+
+    .delete-title {
+        font-size: 30px;
+        margin-bottom: 20px;
+    }
+
+    .delete-text {
+        color: #aaa;
+        line-height: 1.7;
+        margin-bottom: 25px;
+    }
+
+    .delete-button {
+        padding: 12px 22px;
+        background: #963b3b;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .delete-button:hover {
+        background: #b04444;
+    }
+
+    .cancel-button {
+        display: inline-block;
+        padding: 12px 22px;
+        margin-left: 10px;
+        background: #344254;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    .cancel-button:hover {
+        background: #45576d;
+        color: white;
+    }
+</style>
+
+<main class="delete-page">
+    <div class="delete-container">
+
+        <h1 class="delete-title">
+            Видалення уроку
+        </h1>
+
+        <p class="delete-text">
+            Ви дійсно хочете видалити урок
+            <strong>{{ object.title }}</strong>?
+        </p>
+
+        <p class="delete-text">
+            Після видалення відновити його
+            через сайт буде неможливо.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <button type="submit"
+                    class="delete-button">
+                Видалити урок
+            </button>
+
+            <a href="{% url 'content:lesson_detail' object.course.pk object.pk %}"
+               class="cancel-button">
+                Скасувати
+            </a>
+        </form>
+
+    </div>
+</main>
+
+{% endblock %}
