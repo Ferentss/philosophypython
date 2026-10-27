@@ -238,31 +238,6 @@
         <div class="login-divider">
             або
         </div>
-
-        <!-- Вхід через Google -->
-        <form method="post"
-              action="{% url 'social:begin' 'google-oauth2' %}">
-
-            {% csrf_token %}
-
-            <input type="hidden"
-                   name="next"
-                   value="{{ next|default:dashboard_url }}">
-
-            <button type="submit"
-                    class="google-button">
-
-                <span class="google-icon"
-                      aria-hidden="true">G</span>
-
-                <span>
-                    Продовжити через Google
-                </span>
-
-            </button>
-
-        </form>
-
         <p class="login-footer">
             Ще немає акаунта?
             <a href="{% url 'users:register' %}">

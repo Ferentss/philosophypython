@@ -20,7 +20,7 @@ def register(request):
             user = form.save()
 
             # Автоматичний вхід після реєстрації
-            login(request, user)
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
 
             return redirect("users:dashboard")
 
